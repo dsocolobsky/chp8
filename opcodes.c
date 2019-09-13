@@ -14,7 +14,8 @@ void op_ret(emu_t *emu) {
 }
 
 void op_jp(emu_t *emu, uint16_t addr) {
-    printf("STUB op_jp(addr: %04x)\n", addr);
+    printf("op_jp(addr: %04x)\n", addr);
+    emu->pc = addr;
 }
 
 void op_call(emu_t *emu, uint16_t addr) {
@@ -22,15 +23,24 @@ void op_call(emu_t *emu, uint16_t addr) {
 }
 
 void op_se(emu_t *emu, uint8_t reg, uint16_t val) {
-    printf("STUB op_se(reg: %02x, val: %04x)\n", reg, val);
+    printf("op_se(reg: %02x, val: %04x)\n", reg, val);
+    if (emu->V[reg] == val) {
+        emu->pc += 2;
+    }
 }
 
 void op_sne(emu_t *emu, uint8_t reg, uint16_t val) {
-    printf("STUB op_sne(reg: %02x, val: %04x)\n", reg, val);
+    printf("op_sne(reg: %02x, val: %04x)\n", reg, val);
+    if (emu->V[reg] != val) {
+        emu->pc += 2;
+    }
 }
 
 void op_se_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("STUB op_se(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    printf("op_se(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    if (emu->V[reg1] == emu->V[reg2]) {
+        emu->pc += 2;
+    }
 }
 
 void op_ld(emu_t *emu, uint8_t reg, uint16_t val) {
