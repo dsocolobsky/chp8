@@ -3,13 +3,9 @@
 
 void op_cls(emu_t *emu) {
     printf("op_cls()\n");
-    for (int row = 0; row < DISPLAY_ROWS; row++, printf("\n"))
+    for (int row = 0; row < DISPLAY_ROWS; row++)
     for (int col = 0; col < DISPLAY_COLS; col++) {
-        if (emu->display[row][col] == 1) {
-            printf("X");
-        } else {
-            printf("_");
-        }
+        emu->display[row][col] = 0;
     }
 }
 
