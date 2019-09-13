@@ -58,31 +58,48 @@ void op_add(emu_t *emu, uint8_t reg, uint16_t val) {
 }
 
 void op_ld_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("STUB op_ld(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    printf("op_ld(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    emu->V[reg1] = emu->V[reg2];
 }
 
 void op_or(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("STUB op_or(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    printf("op_or(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    emu->V[reg1] |= emu->V[reg2];
 }
 
 void op_and(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("STUB op_and(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    printf("op_and(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    emu->V[reg1] &= emu->V[reg2];
 }
 
 void op_xor(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("STUB op_xor(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    printf("op_xor(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    emu->V[reg1] ^= emu->V[reg2];
 }
 
 void op_add_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("STUB op_add_regs(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    printf("op_add_regs(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    uint16_t res = emu->V[reg1] + emu->V[reg2];
+    if (res > 255) {
+        emu->VF = 1;
+        emu->V[reg1] = (uint8_t)(res);
+    } else {
+        emu->VF = 0;
+        emu->V[reg1] = res;
+    }
 }
 
 void op_sub(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("STUB op_sub(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    printf("op_sub(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    emu->VF = emu->V[reg1] > emu->V[reg2] ? 1 : 0;
+    emu->V[reg1] -= emu->V[reg2];
 }
 
+// WARNING according to cowgod's this is the implementation of shr
+// But some people say it's rather Vx = Vy >> 1
 void op_shr(emu_t *emu, uint8_t reg1, uint8_t reg2) {
     printf("STUB op_shr(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    emu->V[reg1] >>= 1;
 }
 
 void op_subn(emu_t *emu, uint8_t reg1, uint8_t reg2) {
