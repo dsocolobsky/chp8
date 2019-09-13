@@ -1,5 +1,7 @@
 #include "defines.h"
 #include <stdio.h>
+#include <assert.h>
+#include <stdbool.h>
 
 void op_cls(emu_t *emu) {
     printf("op_cls()\n");
@@ -11,6 +13,7 @@ void op_cls(emu_t *emu) {
 
 void op_ret(emu_t *emu) {
     printf("STUB op_ret()\n");
+    assert(false);
 }
 
 void op_jp(emu_t *emu, uint16_t addr) {
@@ -20,6 +23,7 @@ void op_jp(emu_t *emu, uint16_t addr) {
 
 void op_call(emu_t *emu, uint16_t addr) {
     printf("STUB op_call(addr: %04x)\n", addr);
+    assert(false);
 }
 
 void op_se(emu_t *emu, uint8_t reg, uint16_t val) {
@@ -98,20 +102,27 @@ void op_sub(emu_t *emu, uint8_t reg1, uint8_t reg2) {
 // WARNING according to cowgod's this is the implementation of shr
 // But some people say it's rather Vx = Vy >> 1
 void op_shr(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("STUB op_shr(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    printf("op_shr(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    emu->VF = emu->V[reg1] & 0x0001;
     emu->V[reg1] >>= 1;
 }
 
 void op_subn(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("STUB op_subn(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    printf("op_subn(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    emu->VF = emu->V[reg2] > emu->V[reg1] ? 1 : 0;
+    emu->V[reg1] = emu->V[reg2] - emu->V[reg1];    
 }
 
 void op_shl(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("STUB op_shl(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    printf("op_shl(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    emu->VF = (emu->V[reg1] & 0x8000)>>15; // TODO is this OK?
+    emu->V[reg1] <<= 1;
 }
 
 void op_sne_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("STUB op_sne_regs(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    printf("op_sne_regs(reg1: %02x, reg2: %02x)\n", reg1, reg2);
+    if (emu->V[reg1] != emu->V[reg2])
+      emu->pc += 2;
 }
 
 void op_ld_I(emu_t *emu, uint16_t addr) {
@@ -120,12 +131,13 @@ void op_ld_I(emu_t *emu, uint16_t addr) {
 }
 
 void op_jp_V0(emu_t *emu, uint16_t addr) {
-    printf("STUB op_jp_V0(addr: %04X)\n", addr);
+    printf("op_jp_V0(addr: %04X)\n", addr);
     emu->I = addr;
 }
 
 void op_rnd(emu_t *emu, uint8_t reg, uint16_t val) {
     printf("STUB op_rnd(reg: %02X, val: %04X)\n", reg, val);
+    assert(false);
 }
 
 void op_display(emu_t *emu, uint8_t x, uint8_t y, uint8_t n) {
@@ -149,46 +161,59 @@ void op_display(emu_t *emu, uint8_t x, uint8_t y, uint8_t n) {
 
 void op_skp(emu_t *emu, uint8_t reg) {
     printf("STUB op_skp(reg: %02X)\n", reg);
+    assert(false);
 }
 
 void op_skpn(emu_t *emu, uint8_t reg) {
     printf("STUB op_skpn(reg: %02X)\n", reg);
+    assert(false);
 }
 
+// WARNING not sure how the delay timer should behave
 void op_ld_Vx_DT(emu_t *emu, uint8_t reg) {
-    printf("STUB op_ld_Vx_DT(reg: %02X)\n", reg);
+    printf("op_ld_Vx_DT(reg: %02X)\n", reg);
+    emu->V[reg] = emu->DT;
 }
 
 void op_ld_Vx_K(emu_t *emu, uint8_t reg) {
     printf("STUB op_ld_Vx_K(reg: %02X)\n", reg);
+    assert(false);
 }
 
 void op_ld_DT_Vx(emu_t *emu, uint8_t reg) {
-    printf("STUB op_ld_DT_Vx(reg: %02X)\n", reg);
+    printf("op_ld_DT_Vx(reg: %02X)\n", reg);
+    emu->DT = emu->V[reg];
 }
 
+// WARNING not sure how the Sound Timer should behave
 void op_ld_ST_Vx(emu_t *emu, uint8_t reg) {
-    printf("STUB op_ld_ST_Vx(reg: %02X)\n", reg);
+    printf("op_ld_ST_Vx(reg: %02X)\n", reg);
+    emu->ST = emu->V[reg];
 }
 
 void op_add_I(emu_t *emu, uint8_t reg) {
-    printf("STUB op_add_I(reg: %02X)\n", reg);
+    printf("op_add_I(reg: %02X)\n", reg);
+    emu->I += emu->V[reg];
 }
 
 void op_ld_F(emu_t *emu, uint8_t reg) {
     printf("STUB op_ld_F(reg: %02X)\n", reg);
+    assert(false);
 }
 
 void op_ld_BCD(emu_t *emu, uint8_t reg) {
     printf("STUB op_ld_BCD(reg: %02X)\n", reg);
+    assert(false);
 }
 
 void op_ld_array_Vx(emu_t *emu, uint8_t reg) {
     printf("STUB op_ld_array_Vx(reg: %02X)\n", reg);
+    assert(false);
 }
 
 void op_ld_Vx_array(emu_t *emu, uint8_t reg) {
     printf("STUB op_ld_Vx_array(reg: %02X)\n", reg);
+    assert(false);
 }
 
 

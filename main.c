@@ -92,7 +92,7 @@ int main(int argc, char *argv[]) {
 
     emu.pc = PROGSTART;
     emu.VF = 0;
-    emu.I  = PROGSTART;
+    emu.I  = 0;
     emu.memory = calloc(MEMSIZE, sizeof(uint8_t));
 
     fseek(rom, 0L, SEEK_END);
@@ -111,10 +111,12 @@ int main(int argc, char *argv[]) {
     while (emu.pc < PROGSTART+file_size) {
         instruction = (uint16_t)(emu.memory[emu.pc]<<8 | emu.memory[emu.pc+1]);
         emu.pc+=2;
+	printf("pc: %04X\n", emu.pc);
         handle_instruction(&emu, instruction);
     }
 
     show_display(&emu);
+    free(emu.memory);
 
     return 0;
 }
