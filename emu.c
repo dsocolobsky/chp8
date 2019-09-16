@@ -278,7 +278,8 @@ void handle_instruction(emu_t *emu, uint16_t ins) {
         case 0x7: op_add     (emu, reg1, val);  break;
         case 0x8:
             switch (NIBBLE_0(ins)) {
-                case 0x1: op_ld_regs  (emu, reg1, reg2); break;
+                case 0x0: op_ld_regs  (emu, reg1, reg2); break;
+                case 0x1: op_or  (emu, reg1, reg2); break;
                 case 0x2: op_and      (emu, reg1, reg2); break;
                 case 0x3: op_xor      (emu, reg1, reg2); break;
                 case 0x4: op_add_regs (emu, reg1, reg2); break;

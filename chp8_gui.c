@@ -32,7 +32,8 @@ const char* current_instr(emu_t *emu) {
         case 0x7: return "op_add(emu, reg1, val)";
         case 0x8:
             switch (NIBBLE_0(ins)) {
-                case 0x1: return "op_ld_regs(emu, reg1, reg2)";
+                case 0x0: return "op_ld_regs(emu, reg1, reg2)";
+                case 0x1: return "op_or(emu, reg1, reg2)";
                 case 0x2: return "op_and(emu, reg1, reg2)";
                 case 0x3: return "op_xor(emu, reg1, reg2)";
                 case 0x4: return "op_add_regs(emu, reg1, reg2)";
