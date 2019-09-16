@@ -123,6 +123,7 @@ int main(int argc, char* argv[])
         }
 
 	chp8_display_window(ctx, emu);
+	chp8_code_window(ctx, emu);
 
         /* Draw */
         SDL_GetWindowSize(win, &win_width, &win_height);

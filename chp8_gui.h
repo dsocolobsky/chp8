@@ -26,4 +26,9 @@ enum action chp8_debug_window(struct nk_context *ctx, struct emu_t* emu,
  *   Muestra el display del emulador (texto).
  */
 void chp8_display_window(struct nk_context *ctx, struct emu_t* emu);
+
+/* chp8_code_window:
+ *   Muestra una versión desensamblada de las próximas instrucciones
+ */
+void chp8_code_window(struct nk_context* ctx, struct emu_t* emu);
 #endif
