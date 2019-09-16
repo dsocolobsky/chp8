@@ -30,24 +30,21 @@ void op_call(emu_t *emu, uint16_t addr) {
 }
 
 static inline
-void op_se(emu_t *emu, uint8_t reg, uint16_t val) {
-    if (emu->V[reg] == val) {
+void op_se(emu_t *emu, uint8_t reg, uint8_t val) {
+    if (emu->V[reg] == val)
         emu->pc += 2;
-    }
 }
 
 static inline
-void op_sne(emu_t *emu, uint8_t reg, uint16_t val) {
-    if (emu->V[reg] != val) {
+void op_sne(emu_t *emu, uint8_t reg, uint8_t val) {
+    if (emu->V[reg] != val)
         emu->pc += 2;
-    }
 }
 
 static inline
 void op_se_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    if (emu->V[reg1] == emu->V[reg2]) {
+    if (emu->V[reg1] == emu->V[reg2])
         emu->pc += 2;
-    }
 }
 
 static inline
@@ -98,8 +95,6 @@ void op_sub(emu_t *emu, uint8_t reg1, uint8_t reg2) {
     emu->V[reg1] -= emu->V[reg2];
 }
 
-// WARNING according to cowgod's this is the implementation of shr
-// But some people say it's rather Vx = Vy >> 1
 static inline
 void op_shr(emu_t *emu, uint8_t reg1, uint8_t reg2) {
     emu->V[0xF] = emu->V[reg1] & 0x0001;
@@ -114,7 +109,7 @@ void op_subn(emu_t *emu, uint8_t reg1, uint8_t reg2) {
 
 static inline
 void op_shl(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    emu->V[0xF] = (emu->V[reg1] & 0x8000)>>15; // TODO is this OK?
+    emu->V[0xF] = (emu->V[reg1] >> 7) & 0x1;
     emu->V[reg1] <<= 1;
 }
 
