@@ -14,8 +14,8 @@ void op_cls(emu_t *emu) {
 
 static inline
 void op_ret(emu_t *emu) {
-    printf("STUB op_ret()\n");
-    assert(false);
+    emu->SP--;
+    emu->pc = emu->stack[emu->SP];
 }
 
 static inline
@@ -26,8 +26,9 @@ void op_jp(emu_t *emu, uint16_t addr) {
 
 static inline
 void op_call(emu_t *emu, uint16_t addr) {
-    printf("STUB op_call(addr: %04x)\n", addr);
-    assert(false);
+    emu->stack[emu->SP] = emu->pc;
+    emu->SP++;
+    emu->pc = addr;
 }
 
 static inline

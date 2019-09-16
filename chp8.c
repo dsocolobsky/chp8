@@ -17,6 +17,7 @@ void chp8_reset(struct emu_t* emu) {
     emu->pc = PROGSTART;
     emu->VF = 0;
     emu->I = 0;
+    emu->SP = 0;
 }
 
 void chp8_destroy(struct emu_t* emu) {

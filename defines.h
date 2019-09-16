@@ -28,6 +28,8 @@ typedef struct emu_t {
     uint16_t VF;
     uint16_t DT;
     uint16_t ST;
+    uint8_t SP;
+    uint16_t stack[48];
     uint8_t display[DISPLAY_ROWS][DISPLAY_COLS];
     uint32_t current_rom_size;
 } emu_t;
