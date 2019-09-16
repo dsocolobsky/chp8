@@ -60,7 +60,6 @@ bool chp8_singlestep(struct emu_t* emu) {
 
     uint16_t instr = (uint16_t)(emu->memory[emu->pc] << 8 | emu->memory[emu->pc + 1]);
     emu->pc += 2;
-    printf("pc: %04X\n", emu->pc);
     handle_instruction(emu, instr);
 
     return true;

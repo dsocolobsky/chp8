@@ -5,7 +5,6 @@
 
 static inline
 void op_cls(emu_t *emu) {
-    printf("op_cls()\n");
     for (int row = 0; row < DISPLAY_ROWS; row++)
     for (int col = 0; col < DISPLAY_COLS; col++) {
         emu->display[row][col] = 0;
@@ -20,7 +19,6 @@ void op_ret(emu_t *emu) {
 
 static inline
 void op_jp(emu_t *emu, uint16_t addr) {
-    printf("op_jp(addr: %04x)\n", addr);
     emu->pc = addr;
 }
 
@@ -33,7 +31,6 @@ void op_call(emu_t *emu, uint16_t addr) {
 
 static inline
 void op_se(emu_t *emu, uint8_t reg, uint16_t val) {
-    printf("op_se(reg: %02x, val: %04x)\n", reg, val);
     if (emu->V[reg] == val) {
         emu->pc += 2;
     }
@@ -41,7 +38,6 @@ void op_se(emu_t *emu, uint8_t reg, uint16_t val) {
 
 static inline
 void op_sne(emu_t *emu, uint8_t reg, uint16_t val) {
-    printf("op_sne(reg: %02x, val: %04x)\n", reg, val);
     if (emu->V[reg] != val) {
         emu->pc += 2;
     }
@@ -49,7 +45,6 @@ void op_sne(emu_t *emu, uint8_t reg, uint16_t val) {
 
 static inline
 void op_se_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("op_se(reg1: %02x, reg2: %02x)\n", reg1, reg2);
     if (emu->V[reg1] == emu->V[reg2]) {
         emu->pc += 2;
     }
@@ -57,47 +52,36 @@ void op_se_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
 
 static inline
 void op_ld(emu_t *emu, uint8_t reg, uint16_t val) {
-    printf("op_ld(reg: %02X, val: %04X)\n", reg, val);
-    printf("old V%1X was %02X now is ", reg, emu->V[reg]);
     emu->V[reg] = val;
-    printf("%02X\n", emu->V[reg]);
 }
 
 static inline
 void op_add(emu_t *emu, uint8_t reg, uint16_t val) {
-    printf("op_add(reg: %02X, val: %02X)\n", reg, val);
-    printf("old V%1X was %02X now is ", reg, emu->V[reg]);
     emu->V[reg] += val;
-    printf("%02X\n", emu->V[reg]);
 }
 
 static inline
 void op_ld_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("op_ld(reg1: %02x, reg2: %02x)\n", reg1, reg2);
     emu->V[reg1] = emu->V[reg2];
 }
 
 static inline
 void op_or(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("op_or(reg1: %02x, reg2: %02x)\n", reg1, reg2);
     emu->V[reg1] |= emu->V[reg2];
 }
 
 static inline
 void op_and(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("op_and(reg1: %02x, reg2: %02x)\n", reg1, reg2);
     emu->V[reg1] &= emu->V[reg2];
 }
 
 static inline
 void op_xor(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("op_xor(reg1: %02x, reg2: %02x)\n", reg1, reg2);
     emu->V[reg1] ^= emu->V[reg2];
 }
 
 static inline
 void op_add_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("op_add_regs(reg1: %02x, reg2: %02x)\n", reg1, reg2);
     uint16_t res = emu->V[reg1] + emu->V[reg2];
     if (res > 255) {
         emu->V[0xF] = 1;
@@ -110,7 +94,6 @@ void op_add_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
 
 static inline
 void op_sub(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("op_sub(reg1: %02x, reg2: %02x)\n", reg1, reg2);
     emu->V[0xF] = emu->V[reg1] > emu->V[reg2] ? 1 : 0;
     emu->V[reg1] -= emu->V[reg2];
 }
@@ -119,47 +102,40 @@ void op_sub(emu_t *emu, uint8_t reg1, uint8_t reg2) {
 // But some people say it's rather Vx = Vy >> 1
 static inline
 void op_shr(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("op_shr(reg1: %02x, reg2: %02x)\n", reg1, reg2);
     emu->V[0xF] = emu->V[reg1] & 0x0001;
     emu->V[reg1] >>= 1;
 }
 
 static inline
 void op_subn(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("op_subn(reg1: %02x, reg2: %02x)\n", reg1, reg2);
     emu->V[0xF] = emu->V[reg2] > emu->V[reg1] ? 1 : 0;
     emu->V[reg1] = emu->V[reg2] - emu->V[reg1];    
 }
 
 static inline
 void op_shl(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("op_shl(reg1: %02x, reg2: %02x)\n", reg1, reg2);
     emu->V[0xF] = (emu->V[reg1] & 0x8000)>>15; // TODO is this OK?
     emu->V[reg1] <<= 1;
 }
 
 static inline
 void op_sne_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    printf("op_sne_regs(reg1: %02x, reg2: %02x)\n", reg1, reg2);
     if (emu->V[reg1] != emu->V[reg2])
       emu->pc += 2;
 }
 
 static inline
 void op_ld_I(emu_t *emu, uint16_t addr) {
-    printf("op_ld_I(addr: %04X)\n", addr);
     emu->I = addr;
 }
 
 static inline
 void op_jp_V0(emu_t *emu, uint16_t addr) {
-    printf("op_jp_V0(addr: %04X)\n", addr);
     emu->I = addr;
 }
 
 static inline
 void op_rnd(emu_t *emu, uint8_t reg, uint16_t val) {
-    printf("op_rnd(reg: %02X, val: %04X)\n", reg, val);
     emu->V[reg] = rand() & val;
 }
 
@@ -167,8 +143,6 @@ static inline
 void op_display(emu_t *emu, uint8_t x, uint8_t y, uint8_t n) {
     x = emu->V[x];
     y = emu->V[y];
-
-    printf("op_display(x: %02X, y: %02X, lines: %02X)\n", x, y, n);
 
     emu->V[0xF] = 0;
     /* Each line of a sprite is 8 pixels => it's 1 byte */
@@ -201,7 +175,6 @@ void op_skpn(emu_t *emu, uint8_t reg) {
 // WARNING not sure how the delay timer should behave
 static inline
 void op_ld_Vx_DT(emu_t *emu, uint8_t reg) {
-    printf("op_ld_Vx_DT(reg: %02X)\n", reg);
     emu->V[reg] = emu->DT;
 }
 
@@ -213,20 +186,17 @@ void op_ld_Vx_K(emu_t *emu, uint8_t reg) {
 
 static inline
 void op_ld_DT_Vx(emu_t *emu, uint8_t reg) {
-    printf("op_ld_DT_Vx(reg: %02X)\n", reg);
     emu->DT = emu->V[reg];
 }
 
 // WARNING not sure how the Sound Timer should behave
 static inline
 void op_ld_ST_Vx(emu_t *emu, uint8_t reg) {
-    printf("op_ld_ST_Vx(reg: %02X)\n", reg);
     emu->ST = emu->V[reg];
 }
 
 static inline
 void op_add_I(emu_t *emu, uint8_t reg) {
-    printf("op_add_I(reg: %02X)\n", reg);
     emu->I += emu->V[reg];
 }
 
@@ -244,7 +214,6 @@ void op_ld_BCD(emu_t *emu, uint8_t reg) {
 
 static inline
 void op_ld_array_Vx(emu_t *emu, uint8_t reg) {
-    printf("op_ld_array_Vx(reg: %02X)\n", reg);
     for (uint16_t i = 0; i <= reg; i++) {
         emu->memory[emu->I + i] = emu->V[i];
     }
@@ -252,7 +221,6 @@ void op_ld_array_Vx(emu_t *emu, uint8_t reg) {
 
 static inline
 void op_ld_Vx_array(emu_t *emu, uint8_t reg) {
-    printf("op_ld_Vx_array(reg: %02X)\n", reg);
     for (uint16_t i = 0; i <= reg; i++) {
         emu->V[i] = emu->memory[emu->I + i];
     }
