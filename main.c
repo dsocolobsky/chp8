@@ -1,122 +1,153 @@
+/* Bad on nuklear sdl_opengl3 example */
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <stdarg.h>
 #include <string.h>
-#include "defines.h"
+#include <math.h>
+#include <assert.h>
+#include <math.h>
+#include <limits.h>
+#include <time.h>
 
-void show_display(emu_t *emu) {
-    printf("BEGIN DISPLAY\n");
-    for (int row = 0; row < DISPLAY_ROWS; row++, printf("\n"))
-    for (int col = 0; col < DISPLAY_COLS; col++) {
-        if (emu->display[row][col] == 1) {
-            printf("X");
-        } else {
-            printf("_");
-        }
-    }
-    printf("END DISPLAY\n");
-}
+#include <GL/glew.h>
+#include <SDL2/SDL.h>
+#include <SDL2/SDL_opengl.h>
 
+#define NK_INCLUDE_FIXED_TYPES
+#define NK_INCLUDE_STANDARD_IO
+#define NK_INCLUDE_STANDARD_VARARGS
+#define NK_INCLUDE_DEFAULT_ALLOCATOR
+#define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
+#define NK_INCLUDE_FONT_BAKING
+#define NK_INCLUDE_DEFAULT_FONT
+#define NK_IMPLEMENTATION
+#define NK_SDL_GL3_IMPLEMENTATION
+#include "nuklear/nuklear.h"
+#include "nuklear/nuklear_sdl_gl3.h"
 
-void handle_instruction(emu_t *emu, uint16_t ins) {
-    uint8_t reg1 = NIBBLE_2(ins);
-    uint8_t reg2 = NIBBLE_1(ins);
-    uint8_t val  = BYTE_0(ins);
-    uint8_t addr = ins & 0x0FFF;
+#include "chp8.h"
+#include "chp8_gui.h"
 
-    switch (NIBBLE_3(ins)) {
-        case 0x0:
-            if (val == 0xE0) {
-                op_cls(emu);
-                show_display(emu);
-            } else if (val == 0xEE) {
-                op_ret(emu);
-            }
-            break;
-        case 0x1: op_jp      (emu, addr);       break;
-        case 0x2: op_call    (emu, addr);       break;
-        case 0x3: op_se      (emu, reg1, val);  break;
-        case 0x4: op_sne     (emu, reg1, val);  break;
-        case 0x5: op_se_regs (emu, reg1, reg2); break;
-        case 0x6: op_ld      (emu, reg1, val);  break;
-        case 0x7: op_add     (emu, reg1, val);  break;
-        case 0x8:
-            switch (NIBBLE_0(ins)) {
-                case 0x1: op_ld_regs  (emu, reg1, reg2); break;
-                case 0x2: op_and      (emu, reg1, reg2); break;
-                case 0x3: op_xor      (emu, reg1, reg2); break;
-                case 0x4: op_add_regs (emu, reg1, reg2); break;
-                case 0x5: op_sub      (emu, reg1, reg2); break;
-                case 0x6: op_shr      (emu, reg1, reg2); break;
-                case 0x7: op_subn     (emu, reg1, reg2); break;
-                case 0xE: op_shl      (emu, reg1, reg2); break;
-            }
-            break;
-        case 0x9: op_sne    (emu, reg1, reg2); break;
-        case 0xA: op_ld_I   (emu, addr);       break;
-        case 0xB: op_jp_V0  (emu, addr);       break;
-        case 0xC: op_rnd    (emu, reg1, val);  break;
-        case 0xD: op_display(emu, reg1, reg2, NIBBLE_0(ins)); show_display(emu);   break;
-        case 0xE: if (val == 0x9E) op_skp(emu, reg1); else op_skpn(emu, reg2); break;
-        case 0xF:
-            switch (val) {
-                case 0x07: op_ld_Vx_DT   (emu, reg1); break;
-                case 0x0A: op_ld_Vx_K    (emu, reg1); break;
-                case 0x15: op_ld_DT_Vx   (emu, reg1); break;
-                case 0x18: op_ld_ST_Vx   (emu, reg1); break;
-                case 0x1E: op_add_I      (emu, reg1); break;
-                case 0x29: op_ld_F       (emu, reg1); break;
-                case 0x33: op_ld_BCD     (emu, reg1); break;
-                case 0x55: op_ld_array_Vx(emu, reg1); break;
-                case 0x65: op_ld_Vx_array(emu, reg1); break;
-            }
-            break;
-        default: printf("INSTRUCTION %04X NOT FOUND\n", ins); break;
-    }
-}
+#define WINDOW_WIDTH 1200
+#define WINDOW_HEIGHT 800
 
-int main(int argc, char *argv[]) {
+#define MAX_VERTEX_MEMORY 512 * 1024
+#define MAX_ELEMENT_MEMORY 128 * 1024
+
+int main(int argc, char* argv[])
+{
+    /* Platform */
+    SDL_Window *win;
+    SDL_GLContext glContext;
+    int win_width, win_height;
+    int running = 1;
+
+    /* GUI */
+    struct nk_context *ctx;
+    struct nk_colorf bg;
+
+    /* CHP8 emu */
+    struct emu_t* emu;
+    enum  status status = PAUSED;
+
+    /* CHP8 setup */
+    emu = chp8_init();
+
     if (argc < 2) {
         printf("Debes pasar el nombre de la ROM\n");
         return 1;
     }
+    chp8_load_from_file(emu, argv[1]);
 
-    FILE *rom;
-    rom = fopen(argv[1], "r");
-    if (!rom) {
-        printf("Error al leer archivo\n");
-        return 1;
+    /* SDL setup */
+    SDL_SetHint(SDL_HINT_VIDEO_HIGHDPI_DISABLED, "0");
+    SDL_Init(SDL_INIT_VIDEO|SDL_INIT_TIMER|SDL_INIT_EVENTS);
+    SDL_GL_SetAttribute (SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG);
+    SDL_GL_SetAttribute (SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    win = SDL_CreateWindow("CHP8",
+        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+        WINDOW_WIDTH, WINDOW_HEIGHT, SDL_WINDOW_OPENGL|SDL_WINDOW_SHOWN|SDL_WINDOW_ALLOW_HIGHDPI);
+    glContext = SDL_GL_CreateContext(win);
+    SDL_GetWindowSize(win, &win_width, &win_height);
+
+    /* OpenGL setup */
+    glViewport(0, 0, WINDOW_WIDTH, WINDOW_HEIGHT);
+    glewExperimental = 1;
+    if (glewInit() != GLEW_OK) {
+        fprintf(stderr, "Failed to setup GLEW\n");
+        exit(1);
     }
 
-    emu_t emu;
+    ctx = nk_sdl_init(win);
+    /* Load Fonts: if none of these are loaded a default font will be used  */
+    /* Load Cursor: if you uncomment cursor loading please hide the cursor */
+    {struct nk_font_atlas *atlas;
+    nk_sdl_font_stash_begin(&atlas);
+    /*struct nk_font *droid = nk_font_atlas_add_from_file(atlas, "../../../extra_font/DroidSans.ttf", 14, 0);*/
+    /*struct nk_font *roboto = nk_font_atlas_add_from_file(atlas, "../../../extra_font/Roboto-Regular.ttf", 16, 0);*/
+    /*struct nk_font *future = nk_font_atlas_add_from_file(atlas, "../../../extra_font/kenvector_future_thin.ttf", 13, 0);*/
+    /*struct nk_font *clean = nk_font_atlas_add_from_file(atlas, "../../../extra_font/ProggyClean.ttf", 12, 0);*/
+    /*struct nk_font *tiny = nk_font_atlas_add_from_file(atlas, "../../../extra_font/ProggyTiny.ttf", 10, 0);*/
+    /*struct nk_font *cousine = nk_font_atlas_add_from_file(atlas, "../../../extra_font/Cousine-Regular.ttf", 13, 0);*/
+    nk_sdl_font_stash_end();
+    /*nk_style_load_all_cursors(ctx, atlas->cursors);*/
+    /*nk_style_set_font(ctx, &roboto->handle);*/}
 
-    emu.pc = PROGSTART;
-    emu.VF = 0;
-    emu.I  = 0;
-    emu.memory = calloc(MEMSIZE, sizeof(uint8_t));
+    bg.r = 0.10f, bg.g = 0.18f, bg.b = 0.24f, bg.a = 1.0f;
+    while (running)
+    {
+        /* Input */
+        SDL_Event evt;
+        nk_input_begin(ctx);
+        while (SDL_PollEvent(&evt)) {
+            if (evt.type == SDL_QUIT) goto cleanup;
+            nk_sdl_handle_event(&evt);
+        } nk_input_end(ctx);
 
-    fseek(rom, 0L, SEEK_END);
-    long file_size = ftell(rom);
-    rewind(rom);
+        switch (chp8_debug_window(ctx, emu, status)) {
+            case PAUSE:
+                status = PAUSED; break;
+            case STEP:
+                chp8_singlestep(emu); break;
+            case CONTINUE:
+                status = RUNNING; break;
+            case RESET:
+                chp8_reset(emu); break;
+            case NONE:
+                break;
 
-    printf("El size del fichero es: %ld\n", file_size);
+        }
 
-    size_t bytes_read = fread(emu.memory+PROGSTART, sizeof(uint8_t), file_size, rom);
-    if (bytes_read != file_size) {
-        printf("Error leyendo bytes del archivo\n");
-        return 1;
+        chp8_display_window(ctx, emu);
+        chp8_code_window(ctx, emu);
+
+        /* Draw */
+        SDL_GetWindowSize(win, &win_width, &win_height);
+        glViewport(0, 0, win_width, win_height);
+        glClear(GL_COLOR_BUFFER_BIT);
+        glClearColor(bg.r, bg.g, bg.b, bg.a);
+        /* IMPORTANT: `nk_sdl_render` modifies some global OpenGL state
+         * with blending, scissor, face culling, depth test and viewport and
+         * defaults everything back into a default state.
+         * Make sure to either a.) save and restore or b.) reset your own state after
+         * rendering the UI. */
+        nk_sdl_render(NK_ANTI_ALIASING_ON, MAX_VERTEX_MEMORY, MAX_ELEMENT_MEMORY);
+        SDL_GL_SwapWindow(win);
+
+        if (status == RUNNING)
+            chp8_singlestep(emu);
     }
 
-    uint16_t instruction;
-    while (emu.pc < PROGSTART+file_size) {
-        instruction = (uint16_t)(emu.memory[emu.pc]<<8 | emu.memory[emu.pc+1]);
-        emu.pc+=2;
-	printf("pc: %04X\n", emu.pc);
-        handle_instruction(&emu, instruction);
-    }
-
-    show_display(&emu);
-    free(emu.memory);
-
+cleanup:
+    chp8_destroy(emu);
+    nk_sdl_shutdown();
+    SDL_GL_DeleteContext(glContext);
+    SDL_DestroyWindow(win);
+    SDL_Quit();
     return 0;
 }
+
