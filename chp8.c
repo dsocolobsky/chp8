@@ -14,6 +14,7 @@ struct emu_t* chp8_init() {
 }
 
 void chp8_reset(struct emu_t* emu) {
+    op_cls(emu);
     emu->pc = PROGSTART;
     emu->VF = 0;
     emu->I = 0;
