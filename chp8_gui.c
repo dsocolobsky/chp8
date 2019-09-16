@@ -54,8 +54,8 @@ const char* instr_to_string(uint16_t ins) {
         case 0xC: return INS("RND V%X, %03i", reg1, val);
         case 0xD: return INS("DRW V%X, V%X, %03i", reg1, reg2, NIBBLE_0(ins));
         case 0xE: return (val == 0x9E)
-	                 ? INS("SKP V%X", reg1)
-			 : INS("SKNP V%X", reg1);
+                         ? INS("SKP V%X", reg1)
+                         : INS("SKNP V%X", reg1);
         case 0xF:
             switch (val) {
                 case 0x07: return INS("LD V%X, DT", reg1);
@@ -102,13 +102,13 @@ enum action chp8_debug_window(struct nk_context *ctx, struct emu_t* emu,
         if (status == RUNNING && nk_button_label(ctx, "pause"))
             action = PAUSE;
         nk_layout_row_dynamic(ctx, 0, 2);
-	if (nk_button_label(ctx, "reset"))
-	    action = RESET;
+        if (nk_button_label(ctx, "reset"))
+            action = RESET;
 
         nk_layout_row_dynamic(ctx, 0, 2);
         EMU_PROP(pc);
         EMU_PROP(I);
-	nk_layout_row_dynamic(ctx, 0, 3);
+        nk_layout_row_dynamic(ctx, 0, 3);
         EMU_V(0);
         EMU_V(1);
         EMU_V(2);
@@ -124,12 +124,12 @@ enum action chp8_debug_window(struct nk_context *ctx, struct emu_t* emu,
         EMU_V(C);
         EMU_V(D);
         EMU_V(E);
-	nk_layout_row_dynamic(ctx, 0, 3);
+        nk_layout_row_dynamic(ctx, 0, 3);
         EMU_V(F);
         EMU_PROP(DT);
         EMU_PROP(ST);
-	nk_layout_row_dynamic(ctx, 0, 1);
-	nk_labelf(ctx, NK_TEXT_ALIGN_LEFT, "Curr ins: %04X - %s",
+        nk_layout_row_dynamic(ctx, 0, 1);
+        nk_labelf(ctx, NK_TEXT_ALIGN_LEFT, "Curr ins: %04X - %s",
                   (uint16_t)(emu->memory[emu->pc] << 8 | emu->memory[emu->pc + 1]),
                   current_instr(emu));
     }
@@ -146,11 +146,11 @@ void chp8_display_window(struct nk_context* ctx, struct emu_t* emu) {
         NK_WINDOW_MINIMIZABLE|NK_WINDOW_TITLE)) {
 
         nk_layout_row_dynamic(ctx, 10, 1);
-	for (int row = 0; row < DISPLAY_ROWS; row++) {
-		for (int col = 0; col < DISPLAY_COLS; col++)
-			line[col] = emu->display[row][col] ? 'X' : '-';
-		nk_label(ctx, line, NK_TEXT_ALIGN_LEFT);
-	}
+        for (int row = 0; row < DISPLAY_ROWS; row++) {
+                for (int col = 0; col < DISPLAY_COLS; col++)
+                        line[col] = emu->display[row][col] ? 'X' : '-';
+                nk_label(ctx, line, NK_TEXT_ALIGN_LEFT);
+        }
     }
     nk_end(ctx);
 }
@@ -163,12 +163,12 @@ void chp8_code_window(struct nk_context* ctx, struct emu_t* emu) {
         NK_WINDOW_MINIMIZABLE|NK_WINDOW_TITLE)) {
 
         nk_layout_row_dynamic(ctx, 10, 1);
-	for (int i = 0; i < 2 * CODE_LINES; i += 2) {
+        for (int i = 0; i < 2 * CODE_LINES; i += 2) {
             uint16_t ins = (uint16_t)(emu->memory[emu->pc + i] << 8
                                       | emu->memory[emu->pc + i + 1]);
-	    nk_labelf(ctx, NK_TEXT_ALIGN_LEFT, "0x%04X | %04X | %s",
-	              emu->pc + i, ins, instr_to_string(ins));
-	}
+            nk_labelf(ctx, NK_TEXT_ALIGN_LEFT, "0x%04X | %04X | %s",
+                      emu->pc + i, ins, instr_to_string(ins));
+        }
     }
     nk_end(ctx);
 }

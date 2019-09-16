@@ -116,14 +116,14 @@ int main(int argc, char* argv[])
             case CONTINUE:
                 status = RUNNING; break;
             case RESET:
-	        chp8_reset(emu); break;
+                chp8_reset(emu); break;
             case NONE:
                 break;
 
         }
 
-	chp8_display_window(ctx, emu);
-	chp8_code_window(ctx, emu);
+        chp8_display_window(ctx, emu);
+        chp8_code_window(ctx, emu);
 
         /* Draw */
         SDL_GetWindowSize(win, &win_width, &win_height);
