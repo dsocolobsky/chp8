@@ -49,7 +49,7 @@ int main(int argc, char* argv[])
 
     /* CHP8 emu */
     struct emu_t* emu;
-    enum  status status = RUNNING;
+    enum  status status = PAUSED;
 
     /* CHP8 setup */
     emu = chp8_init();
