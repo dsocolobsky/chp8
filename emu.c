@@ -222,11 +222,9 @@ void handle_instruction(emu_t *emu, uint16_t ins) {
 
     switch (NIBBLE_3(ins)) {
         case 0x0:
-            if (val == 0xE0) {
-                op_cls(emu);
-            } else if (val == 0xEE) {
-                op_ret(emu);
-            }
+            if (val == 0xE0)      op_cls(emu);
+            else if (val == 0xEE) op_ret(emu);
+            else goto unknown;
             break;
         case 0x1: op_jp      (emu, addr);       break;
         case 0x2: op_call    (emu, addr);       break;
@@ -238,7 +236,7 @@ void handle_instruction(emu_t *emu, uint16_t ins) {
         case 0x8:
             switch (NIBBLE_0(ins)) {
                 case 0x0: op_ld_regs  (emu, reg1, reg2); break;
-                case 0x1: op_or  (emu, reg1, reg2); break;
+                case 0x1: op_or       (emu, reg1, reg2); break;
                 case 0x2: op_and      (emu, reg1, reg2); break;
                 case 0x3: op_xor      (emu, reg1, reg2); break;
                 case 0x4: op_add_regs (emu, reg1, reg2); break;
@@ -246,28 +244,36 @@ void handle_instruction(emu_t *emu, uint16_t ins) {
                 case 0x6: op_shr      (emu, reg1, reg2); break;
                 case 0x7: op_subn     (emu, reg1, reg2); break;
                 case 0xE: op_shl      (emu, reg1, reg2); break;
+                default:  goto unknown;
             }
             break;
-        case 0x9: op_sne    (emu, reg1, reg2); break;
-        case 0xA: op_ld_I   (emu, addr);       break;
-        case 0xB: op_jp_V0  (emu, addr);       break;
-        case 0xC: op_rnd    (emu, reg1, val);  break;
-        case 0xD: op_display(emu, reg1, reg2, NIBBLE_0(ins));  break;
-        case 0xE: if (val == 0x9E) op_skp(emu, reg1); else op_skpn(emu, reg1); break;
+        case 0x9: op_sne     (emu, reg1, reg2); break;
+        case 0xA: op_ld_I    (emu, addr);       break;
+        case 0xB: op_jp_V0   (emu, addr);       break;
+        case 0xC: op_rnd     (emu, reg1, val);  break;
+        case 0xD: op_display (emu, reg1, reg2, NIBBLE_0(ins)); break;
+        case 0xE:
+            if (val == 0x9E)      op_skp(emu, reg1);
+            else if (val == 0xA1) op_skpn(emu, reg1);
+            else goto unknown;
+            break;
         case 0xF:
             switch (val) {
-                case 0x07: op_ld_Vx_DT   (emu, reg1); break;
-                case 0x0A: op_ld_Vx_K    (emu, reg1); break;
-                case 0x15: op_ld_DT_Vx   (emu, reg1); break;
-                case 0x18: op_ld_ST_Vx   (emu, reg1); break;
-                case 0x1E: op_add_I      (emu, reg1); break;
-                case 0x29: op_ld_F       (emu, reg1); break;
-                case 0x33: op_ld_BCD     (emu, reg1); break;
-                case 0x55: op_ld_array_Vx(emu, reg1); break;
-                case 0x65: op_ld_Vx_array(emu, reg1); break;
+                case 0x07: op_ld_Vx_DT    (emu, reg1); break;
+                case 0x0A: op_ld_Vx_K     (emu, reg1); break;
+                case 0x15: op_ld_DT_Vx    (emu, reg1); break;
+                case 0x18: op_ld_ST_Vx    (emu, reg1); break;
+                case 0x1E: op_add_I       (emu, reg1); break;
+                case 0x29: op_ld_F        (emu, reg1); break;
+                case 0x33: op_ld_BCD      (emu, reg1); break;
+                case 0x55: op_ld_array_Vx (emu, reg1); break;
+                case 0x65: op_ld_Vx_array (emu, reg1); break;
             }
             break;
-        default: printf("INSTRUCTION %04X NOT FOUND\n", ins); break;
+        default:
+        unknown:
+            printf("INSTRUCTION %04X NOT FOUND\n", ins);
+            break;
     }
 }
 #endif
