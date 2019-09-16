@@ -100,10 +100,10 @@ void op_add_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
     printf("op_add_regs(reg1: %02x, reg2: %02x)\n", reg1, reg2);
     uint16_t res = emu->V[reg1] + emu->V[reg2];
     if (res > 255) {
-        emu->VF = 1;
+        emu->V[0xF] = 1;
         emu->V[reg1] = (uint8_t)(res);
     } else {
-        emu->VF = 0;
+        emu->V[0xF] = 0;
         emu->V[reg1] = res;
     }
 }
@@ -111,7 +111,7 @@ void op_add_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
 static inline
 void op_sub(emu_t *emu, uint8_t reg1, uint8_t reg2) {
     printf("op_sub(reg1: %02x, reg2: %02x)\n", reg1, reg2);
-    emu->VF = emu->V[reg1] > emu->V[reg2] ? 1 : 0;
+    emu->V[0xF] = emu->V[reg1] > emu->V[reg2] ? 1 : 0;
     emu->V[reg1] -= emu->V[reg2];
 }
 
@@ -120,21 +120,21 @@ void op_sub(emu_t *emu, uint8_t reg1, uint8_t reg2) {
 static inline
 void op_shr(emu_t *emu, uint8_t reg1, uint8_t reg2) {
     printf("op_shr(reg1: %02x, reg2: %02x)\n", reg1, reg2);
-    emu->VF = emu->V[reg1] & 0x0001;
+    emu->V[0xF] = emu->V[reg1] & 0x0001;
     emu->V[reg1] >>= 1;
 }
 
 static inline
 void op_subn(emu_t *emu, uint8_t reg1, uint8_t reg2) {
     printf("op_subn(reg1: %02x, reg2: %02x)\n", reg1, reg2);
-    emu->VF = emu->V[reg2] > emu->V[reg1] ? 1 : 0;
+    emu->V[0xF] = emu->V[reg2] > emu->V[reg1] ? 1 : 0;
     emu->V[reg1] = emu->V[reg2] - emu->V[reg1];    
 }
 
 static inline
 void op_shl(emu_t *emu, uint8_t reg1, uint8_t reg2) {
     printf("op_shl(reg1: %02x, reg2: %02x)\n", reg1, reg2);
-    emu->VF = (emu->V[reg1] & 0x8000)>>15; // TODO is this OK?
+    emu->V[0xF] = (emu->V[reg1] & 0x8000)>>15; // TODO is this OK?
     emu->V[reg1] <<= 1;
 }
 
@@ -170,7 +170,7 @@ void op_display(emu_t *emu, uint8_t x, uint8_t y, uint8_t n) {
 
     printf("op_display(x: %02X, y: %02X, lines: %02X)\n", x, y, n);
 
-    emu->VF = 0;
+    emu->V[0xF] = 0;
     /* Each line of a sprite is 8 pixels => it's 1 byte */
     for (int line = 0; line < n; line++) {
         for (int px = 7; px >= 0; px--) {
@@ -179,7 +179,7 @@ void op_display(emu_t *emu, uint8_t x, uint8_t y, uint8_t n) {
 
             if (BIT_SET(emu->memory[emu->I+line], px)) {
                 if (emu->display[ry][rx] == 1)
-                    emu->VF = 1;
+                    emu->V[0xF] = 1;
                 emu->display[ry][rx] ^= 1;
             }
         }
@@ -298,7 +298,7 @@ void handle_instruction(emu_t *emu, uint16_t ins) {
         case 0xB: op_jp_V0  (emu, addr);       break;
         case 0xC: op_rnd    (emu, reg1, val);  break;
         case 0xD: op_display(emu, reg1, reg2, NIBBLE_0(ins));  break;
-        case 0xE: if (val == 0x9E) op_skp(emu, reg1); else op_skpn(emu, reg2); break;
+        case 0xE: if (val == 0x9E) op_skp(emu, reg1); else op_skpn(emu, reg1); break;
         case 0xF:
             switch (val) {
                 case 0x07: op_ld_Vx_DT   (emu, reg1); break;
