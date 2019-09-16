@@ -159,8 +159,8 @@ void op_jp_V0(emu_t *emu, uint16_t addr) {
 
 static inline
 void op_rnd(emu_t *emu, uint8_t reg, uint16_t val) {
-    printf("STUB op_rnd(reg: %02X, val: %04X)\n", reg, val);
-    assert(false);
+    printf("op_rnd(reg: %02X, val: %04X)\n", reg, val);
+    emu->V[reg] = rand() & val;
 }
 
 static inline
@@ -244,14 +244,18 @@ void op_ld_BCD(emu_t *emu, uint8_t reg) {
 
 static inline
 void op_ld_array_Vx(emu_t *emu, uint8_t reg) {
-    printf("STUB op_ld_array_Vx(reg: %02X)\n", reg);
-    assert(false);
+    printf("op_ld_array_Vx(reg: %02X)\n", reg);
+    for (uint16_t i = 0; i <= reg; i++) {
+        emu->memory[emu->I + i] = emu->V[i];
+    }
 }
 
 static inline
 void op_ld_Vx_array(emu_t *emu, uint8_t reg) {
-    printf("STUB op_ld_Vx_array(reg: %02X)\n", reg);
-    assert(false);
+    printf("op_ld_Vx_array(reg: %02X)\n", reg);
+    for (uint16_t i = 0; i <= reg; i++) {
+        emu->V[i] = emu->memory[emu->I + i];
+    }
 }
 
 static inline

@@ -24,8 +24,8 @@ typedef struct emu_t {
     uint8_t *memory;
     uint16_t pc;
     uint16_t I;
-    uint16_t V[15];
-    uint16_t VF;
+    uint8_t V[15];
+    uint8_t VF;
     uint16_t DT;
     uint16_t ST;
     uint8_t SP;
