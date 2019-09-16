@@ -177,12 +177,11 @@ void op_display(emu_t *emu, uint8_t x, uint8_t y, uint8_t n) {
             uint8_t rx = (x + 7 - px) % DISPLAY_COLS;
             uint8_t ry = (y + line) % DISPLAY_ROWS;
 
-            if (BIT_SET(emu->memory[emu->I+line], px))
-                emu->display[ry][rx] = 1;
-            else if (emu->display[ry][rx] == 1) {
-                emu->VF = 1;
-                emu->display[ry][rx] = 0;
-	    }
+            if (BIT_SET(emu->memory[emu->I+line], px)) {
+                if (emu->display[ry][rx] == 1)
+                    emu->VF = 1;
+                emu->display[ry][rx] ^= 1;
+            }
         }
     }
 }
