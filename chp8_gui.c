@@ -111,7 +111,9 @@ enum action chp8_debug_window(struct nk_context *ctx, struct emu_t* emu,
         EMU_PROP(DT);
         EMU_PROP(ST);
 	nk_layout_row_dynamic(ctx, 0, 1);
-	nk_labelf(ctx, NK_TEXT_ALIGN_LEFT, "Curr ins: %s", current_instr(emu));
+	nk_labelf(ctx, NK_TEXT_ALIGN_LEFT, "Curr ins: %04X - %s",
+                  (uint16_t)(emu->memory[emu->pc] << 8 | emu->memory[emu->pc + 1]),
+                  current_instr(emu));
     }
     nk_end(ctx);
 
