@@ -6,9 +6,8 @@
 static inline
 void op_cls(emu_t *emu) {
     for (int row = 0; row < DISPLAY_ROWS; row++)
-    for (int col = 0; col < DISPLAY_COLS; col++) {
+    for (int col = 0; col < DISPLAY_COLS; col++)
         emu->display[row][col] = 0;
-    }
 }
 
 static inline
@@ -80,18 +79,13 @@ void op_xor(emu_t *emu, uint8_t reg1, uint8_t reg2) {
 static inline
 void op_add_regs(emu_t *emu, uint8_t reg1, uint8_t reg2) {
     uint16_t res = emu->V[reg1] + emu->V[reg2];
-    if (res > 255) {
-        emu->V[0xF] = 1;
-        emu->V[reg1] = (uint8_t)(res);
-    } else {
-        emu->V[0xF] = 0;
-        emu->V[reg1] = res;
-    }
+    emu->V[0xF] = res > 255;
+    emu->V[reg1] = res;
 }
 
 static inline
 void op_sub(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    emu->V[0xF] = emu->V[reg1] > emu->V[reg2] ? 1 : 0;
+    emu->V[0xF] = emu->V[reg1] > emu->V[reg2];
     emu->V[reg1] -= emu->V[reg2];
 }
 
@@ -103,7 +97,7 @@ void op_shr(emu_t *emu, uint8_t reg1, uint8_t reg2) {
 
 static inline
 void op_subn(emu_t *emu, uint8_t reg1, uint8_t reg2) {
-    emu->V[0xF] = emu->V[reg2] > emu->V[reg1] ? 1 : 0;
+    emu->V[0xF] = emu->V[reg2] > emu->V[reg1];
     emu->V[reg1] = emu->V[reg2] - emu->V[reg1];    
 }
 
@@ -126,7 +120,7 @@ void op_ld_I(emu_t *emu, uint16_t addr) {
 
 static inline
 void op_jp_V0(emu_t *emu, uint16_t addr) {
-    emu->I = addr;
+    emu->I = addr + emu->V[0x0];
 }
 
 static inline
@@ -209,16 +203,14 @@ void op_ld_BCD(emu_t *emu, uint8_t reg) {
 
 static inline
 void op_ld_array_Vx(emu_t *emu, uint8_t reg) {
-    for (uint16_t i = 0; i <= reg; i++) {
+    for (uint16_t i = 0; i <= reg; i++)
         emu->memory[emu->I + i] = emu->V[i];
-    }
 }
 
 static inline
 void op_ld_Vx_array(emu_t *emu, uint8_t reg) {
-    for (uint16_t i = 0; i <= reg; i++) {
+    for (uint16_t i = 0; i <= reg; i++)
         emu->V[i] = emu->memory[emu->I + i];
-    }
 }
 
 static inline
