@@ -83,6 +83,9 @@ const char* current_instr(emu_t *emu) {
 #define EMU_PROP(reg) \
     nk_labelf(ctx, NK_TEXT_ALIGN_LEFT, #reg ": %X", emu->reg)
 
+#define EMU_V(idx) \
+    nk_labelf(ctx, NK_TEXT_ALIGN_LEFT, "V"#idx ": %X", emu->V[0x##idx])
+
 enum action chp8_debug_window(struct nk_context *ctx, struct emu_t* emu,
                               enum status status) {
     enum action action = NONE;
@@ -106,23 +109,23 @@ enum action chp8_debug_window(struct nk_context *ctx, struct emu_t* emu,
         EMU_PROP(pc);
         EMU_PROP(I);
 	nk_layout_row_dynamic(ctx, 0, 3);
-        EMU_PROP(V[0x0]);
-        EMU_PROP(V[0x1]);
-        EMU_PROP(V[0x2]);
-        EMU_PROP(V[0x3]);
-        EMU_PROP(V[0x4]);
-        EMU_PROP(V[0x5]);
-        EMU_PROP(V[0x6]);
-        EMU_PROP(V[0x7]);
-        EMU_PROP(V[0x8]);
-        EMU_PROP(V[0x9]);
-        EMU_PROP(V[0xA]);
-        EMU_PROP(V[0xB]);
-        EMU_PROP(V[0xC]);
-        EMU_PROP(V[0xD]);
-        EMU_PROP(V[0xE]);
+        EMU_V(0);
+        EMU_V(1);
+        EMU_V(2);
+        EMU_V(3);
+        EMU_V(4);
+        EMU_V(5);
+        EMU_V(6);
+        EMU_V(7);
+        EMU_V(8);
+        EMU_V(9);
+        EMU_V(A);
+        EMU_V(B);
+        EMU_V(C);
+        EMU_V(D);
+        EMU_V(E);
 	nk_layout_row_dynamic(ctx, 0, 3);
-        EMU_PROP(V[0xF]);
+        EMU_V(F);
         EMU_PROP(DT);
         EMU_PROP(ST);
 	nk_layout_row_dynamic(ctx, 0, 1);
