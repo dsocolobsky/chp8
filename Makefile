@@ -16,6 +16,8 @@ all: $(BIN)
 	
 clean:
 	rm -f $(BIN)
+	rm -f gui
+	rm -f main
 
 
 gui: main.c chp8.c defines.h chp8_gui.c emu.c
