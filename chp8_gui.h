@@ -31,4 +31,6 @@ void chp8_display_window(struct nk_context *ctx, struct emu_t* emu);
  *   Muestra una versión desensamblada de las próximas instrucciones
  */
 void chp8_code_window(struct nk_context* ctx, struct emu_t* emu);
+
+void chp8_memory_window(struct nk_context* ctx, struct emu_t* emu);
 #endif

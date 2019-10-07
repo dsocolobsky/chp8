@@ -156,7 +156,6 @@ void chp8_display_window(struct nk_context* ctx, struct emu_t* emu) {
 }
 
 void chp8_code_window(struct nk_context* ctx, struct emu_t* emu) {
-    struct nk_color dark_gray = {64, 64, 64, 255};
     struct nk_color gray = {128, 128, 128, 255};
     struct nk_color yellow = {255,255,0,255};
     struct nk_color which;
@@ -171,17 +170,27 @@ void chp8_code_window(struct nk_context* ctx, struct emu_t* emu) {
         for (int i = 0; i < 2 * emu->current_rom_size; i += 2) {
             uint16_t ins = (uint16_t)(emu->memory[PROGSTART] << 8
                                       | emu->memory[PROGSTART + i + 1]);
-            if (i < (emu->pc - PROGSTART)) {
-                which = dark_gray;
-            } else if (i == emu->pc - PROGSTART) {
-                which = yellow;
-            } else {
-                which = gray;
-            }
+            
+            which = (i == emu->pc - PROGSTART) ? yellow : gray;
 
             nk_labelf_colored(ctx, NK_TEXT_ALIGN_LEFT, which, "0x%04X | %04X | %s",
                       emu->pc + i, ins, instr_to_string(ins));
         }
+    }
+    nk_end(ctx);
+}
+
+void chp8_memory_window(struct nk_context* ctx, struct emu_t* emu) {
+    if (nk_begin(ctx, "CHP8 Memory", nk_rect(200, 200, 300, 600),
+    NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE|
+        NK_WINDOW_MINIMIZABLE|NK_WINDOW_TITLE)) {
+
+        nk_layout_row_dynamic(ctx, 10, 1);
+        for (int i = 0; i < MEMSIZE; i+=4) {
+            nk_labelf(ctx, NK_TEXT_ALIGN_LEFT, "0x%04X | 0x%04X | 0x%04X | 0x%04X",
+                emu->memory[i+0], emu->memory[i+1], emu->memory[i+2], emu->memory[i+3]);
+        }
+
     }
     nk_end(ctx);
 }
