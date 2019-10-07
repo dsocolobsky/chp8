@@ -6,8 +6,8 @@
 #include "emu.c"
 
 struct emu_t* chp8_init() {
-    emu_t* emu = calloc(sizeof(emu_t) + MEMSIZE * sizeof(uint8_t), 1);
-    emu->pc = PROGSTART;
+    emu_t* emu  = calloc(sizeof(emu_t) + MEMSIZE * sizeof(uint8_t), 1);
+    emu->pc     = PROGSTART;
     emu->memory = (uint8_t*) (emu + 1);
 
     return emu;
@@ -15,10 +15,10 @@ struct emu_t* chp8_init() {
 
 void chp8_reset(struct emu_t* emu) {
     op_cls(emu);
-    emu->pc = PROGSTART;
+    emu->pc     = PROGSTART;
     emu->V[0xF] = 0;
-    emu->I = 0;
-    emu->SP = 0;
+    emu->I      = 0;
+    emu->SP     = 0;
 }
 
 void chp8_destroy(struct emu_t* emu) {

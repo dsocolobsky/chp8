@@ -83,19 +83,12 @@ int main(int argc, char* argv[])
     }
 
     ctx = nk_sdl_init(win);
-    /* Load Fonts: if none of these are loaded a default font will be used  */
-    /* Load Cursor: if you uncomment cursor loading please hide the cursor */
-    {struct nk_font_atlas *atlas;
+
+    struct nk_font_atlas *atlas;
     nk_sdl_font_stash_begin(&atlas);
-    /*struct nk_font *droid = nk_font_atlas_add_from_file(atlas, "../../../extra_font/DroidSans.ttf", 14, 0);*/
-    /*struct nk_font *roboto = nk_font_atlas_add_from_file(atlas, "../../../extra_font/Roboto-Regular.ttf", 16, 0);*/
-    /*struct nk_font *future = nk_font_atlas_add_from_file(atlas, "../../../extra_font/kenvector_future_thin.ttf", 13, 0);*/
-    /*struct nk_font *clean = nk_font_atlas_add_from_file(atlas, "../../../extra_font/ProggyClean.ttf", 12, 0);*/
-    /*struct nk_font *tiny = nk_font_atlas_add_from_file(atlas, "../../../extra_font/ProggyTiny.ttf", 10, 0);*/
-    /*struct nk_font *cousine = nk_font_atlas_add_from_file(atlas, "../../../extra_font/Cousine-Regular.ttf", 13, 0);*/
+    struct nk_font *proggy = nk_font_atlas_add_from_file(atlas, "ProggyTiny.ttf", 10, 0);
     nk_sdl_font_stash_end();
-    /*nk_style_load_all_cursors(ctx, atlas->cursors);*/
-    /*nk_style_set_font(ctx, &roboto->handle);*/}
+    nk_style_set_font(ctx, &proggy->handle);
 
     bg.r = 0.10f, bg.g = 0.18f, bg.b = 0.24f, bg.a = 1.0f;
     while (running)
@@ -106,20 +99,15 @@ int main(int argc, char* argv[])
         while (SDL_PollEvent(&evt)) {
             if (evt.type == SDL_QUIT) goto cleanup;
             nk_sdl_handle_event(&evt);
-        } nk_input_end(ctx);
+        }
+        nk_input_end(ctx);
 
         switch (chp8_debug_window(ctx, emu, status)) {
-            case PAUSE:
-                status = PAUSED; break;
-            case STEP:
-                chp8_singlestep(emu); break;
-            case CONTINUE:
-                status = RUNNING; break;
-            case RESET:
-                chp8_reset(emu); break;
-            case NONE:
-                break;
-
+            case PAUSE:     status = PAUSED;        break;
+            case STEP:      chp8_singlestep(emu);   break;
+            case CONTINUE:  status = RUNNING;       break;
+            case RESET:     chp8_reset(emu);        break;
+            case NONE:                              break;
         }
 
         chp8_display_window(ctx, emu);
@@ -130,11 +118,7 @@ int main(int argc, char* argv[])
         glViewport(0, 0, win_width, win_height);
         glClear(GL_COLOR_BUFFER_BIT);
         glClearColor(bg.r, bg.g, bg.b, bg.a);
-        /* IMPORTANT: `nk_sdl_render` modifies some global OpenGL state
-         * with blending, scissor, face culling, depth test and viewport and
-         * defaults everything back into a default state.
-         * Make sure to either a.) save and restore or b.) reset your own state after
-         * rendering the UI. */
+
         nk_sdl_render(NK_ANTI_ALIASING_ON, MAX_VERTEX_MEMORY, MAX_ELEMENT_MEMORY);
         SDL_GL_SwapWindow(win);
 
