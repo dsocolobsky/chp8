@@ -168,7 +168,7 @@ void chp8_code_window(struct nk_context* ctx, struct emu_t* emu) {
         // calculate how many lines the instructions will take as it's not the same.
         nk_layout_row_dynamic(ctx, 10, 1);
         for (int i = 0; i < 2 * emu->current_rom_size; i += 2) {
-            uint16_t ins = (uint16_t)(emu->memory[PROGSTART] << 8
+            uint16_t ins = (uint16_t)(emu->memory[PROGSTART + i] << 8
                                       | emu->memory[PROGSTART + i + 1]);
             
             which = (i == emu->pc - PROGSTART) ? yellow : gray;
