@@ -156,17 +156,30 @@ void chp8_display_window(struct nk_context* ctx, struct emu_t* emu) {
 }
 
 void chp8_code_window(struct nk_context* ctx, struct emu_t* emu) {
-    #define CODE_LINES 32
+    struct nk_color dark_gray = {64, 64, 64, 255};
+    struct nk_color gray = {128, 128, 128, 255};
+    struct nk_color yellow = {255,255,0,255};
+    struct nk_color which;
 
     if (nk_begin(ctx, "CHP8 Disassembly", nk_rect(700, 70, 300, 600),
         NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE|
         NK_WINDOW_MINIMIZABLE|NK_WINDOW_TITLE)) {
 
+        // TODO: We're using emu->current_rom_size in the for but we should probably
+        // calculate how many lines the instructions will take as it's not the same.
         nk_layout_row_dynamic(ctx, 10, 1);
-        for (int i = 0; i < 2 * CODE_LINES; i += 2) {
-            uint16_t ins = (uint16_t)(emu->memory[emu->pc + i] << 8
-                                      | emu->memory[emu->pc + i + 1]);
-            nk_labelf(ctx, NK_TEXT_ALIGN_LEFT, "0x%04X | %04X | %s",
+        for (int i = 0; i < 2 * emu->current_rom_size; i += 2) {
+            uint16_t ins = (uint16_t)(emu->memory[PROGSTART] << 8
+                                      | emu->memory[PROGSTART + i + 1]);
+            if (i < (emu->pc - PROGSTART)) {
+                which = dark_gray;
+            } else if (i == emu->pc - PROGSTART) {
+                which = yellow;
+            } else {
+                which = gray;
+            }
+
+            nk_labelf_colored(ctx, NK_TEXT_ALIGN_LEFT, which, "0x%04X | %04X | %s",
                       emu->pc + i, ins, instr_to_string(ins));
         }
     }
