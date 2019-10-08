@@ -132,7 +132,8 @@ static void op_skp(emu_t *emu, uint8_t reg) {
 }
 
 static void op_sknp(emu_t *emu, uint8_t reg) {
-    emu->pc += 2;
+    if (!emu->keypad[emu->V[reg]])
+        emu->pc += 2;
 }
 
 // WARNING not sure how the delay timer should behave

@@ -14,6 +14,8 @@ struct emu_t* chp8_init();
  */
 void chp8_reset(struct emu_t* emu);
 
+void chp8_clear_keypad(struct emu_t* emu);
+
 /* chp8_destroy:
  *   Devuelve los recursos adquiridos por chp8_init().
  */

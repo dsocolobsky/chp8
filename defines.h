@@ -1,6 +1,7 @@
 #ifndef _DEFINES_H
 #define _DEFINES_H
 #include <stdint.h>
+#include <stdbool.h>
 
 /* Size de la memoria (en bytes) */
 #define MEMSIZE     4096
@@ -31,5 +32,6 @@ typedef struct emu_t {
     uint16_t stack[48];
     uint8_t display[DISPLAY_ROWS][DISPLAY_COLS];
     uint32_t current_rom_size;
+    bool keypad[16];
 } emu_t;
 #endif

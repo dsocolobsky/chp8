@@ -194,3 +194,78 @@ void chp8_memory_window(struct nk_context* ctx, struct emu_t* emu) {
     }
     nk_end(ctx);
 }
+
+void chp8_keypad_window(struct nk_context* ctx, struct emu_t* emu) {
+    if (nk_begin(ctx, "CHP8 Keypad", nk_rect(100, 100, 400, 380),
+    NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE|
+        NK_WINDOW_MINIMIZABLE|NK_WINDOW_TITLE)) {
+
+            nk_layout_row_dynamic(ctx, 75, 4);
+
+            if (nk_button_label(ctx, "1")) {
+                emu->keypad[0x1] = true;
+            }
+
+            if (nk_button_label(ctx, "2")) {
+                emu->keypad[0x2] = true;
+            }
+
+            if (nk_button_label(ctx, "3")) {
+                emu->keypad[0x3] = true;
+            }
+
+            if (nk_button_label(ctx, "C")) {
+                emu->keypad[0xC] = true;
+            }
+
+            if (nk_button_label(ctx, "4")) {
+                emu->keypad[0x4] = true;
+            }
+
+            if (nk_button_label(ctx, "5")) {
+                emu->keypad[0x5] = true;
+            }
+
+            if (nk_button_label(ctx, "6")) {
+                emu->keypad[0x6] = true;
+            }
+
+            if (nk_button_label(ctx, "D")) {
+                emu->keypad[0xD] = true;
+            }
+
+            if (nk_button_label(ctx, "7")) {
+                emu->keypad[0x7] = true;
+            }
+
+            if (nk_button_label(ctx, "8")) {
+                emu->keypad[0x8] = true;
+            }
+
+            if (nk_button_label(ctx, "9")) {
+                emu->keypad[0x9] = true;
+            }
+
+            if (nk_button_label(ctx, "E")) {
+                emu->keypad[0xE] = true;
+            }
+
+            if (nk_button_label(ctx, "A")) {
+                emu->keypad[0xA] = true;
+            }
+
+            if (nk_button_label(ctx, "0")) {
+                emu->keypad[0x0] = true;
+            }
+
+            if (nk_button_label(ctx, "B")) {
+                emu->keypad[0xB] = true;
+            }
+
+            if (nk_button_label(ctx, "F")) {
+                emu->keypad[0xF] = true;
+            }
+
+    }
+    nk_end(ctx);
+}

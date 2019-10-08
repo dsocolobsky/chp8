@@ -33,6 +33,8 @@ struct emu_t* chp8_init() {
     for (int i = 0; i < 80; i++)
         emu->memory[i] = fontset[i];
 
+    chp8_clear_keypad(emu);
+
     return emu;
 }
 
@@ -43,6 +45,13 @@ void chp8_reset(struct emu_t* emu) {
     emu->I      = 0;
     emu->SP     = 0;
     emu->DT     = 0;
+
+    chp8_clear_keypad(emu);
+}
+
+void chp8_clear_keypad(struct emu_t* emu) {
+    for (int i = 0; i < 16; i++)
+        emu->keypad[i] = false;
 }
 
 void chp8_destroy(struct emu_t* emu) {
@@ -88,6 +97,8 @@ bool chp8_singlestep(struct emu_t* emu) {
 
     if (emu->DT > 0)
         emu->DT--;
+
+    chp8_clear_keypad(emu);
 
     return true;
 }
