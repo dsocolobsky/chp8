@@ -160,8 +160,7 @@ static void op_add_I(emu_t *emu, uint8_t reg) {
 }
 
 static void op_ld_F(emu_t *emu, uint8_t reg) {
-    printf("STUB op_ld_F(reg: %02X)\n", reg);
-    assert(false);
+    emu->I = 0x0000 + emu->V[reg]*5;
 }
 
 static void op_ld_BCD(emu_t *emu, uint8_t reg) {
