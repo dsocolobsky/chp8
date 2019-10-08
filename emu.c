@@ -145,7 +145,13 @@ static void op_ld_Vx_DT(emu_t *emu, uint8_t reg) {
 static void op_ld_Vx_K(emu_t *emu, uint8_t reg) {
     bool pressed = false;
     while (!pressed) {
-        
+        for (int i = 0x0; i <= 0xF; i++) {
+            if (emu->keypad[i]) {
+                emu->V[reg] = i;
+                pressed = true;
+                break;
+            }
+        }
     }
 }
 
