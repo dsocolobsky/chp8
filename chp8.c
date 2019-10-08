@@ -42,6 +42,7 @@ void chp8_reset(struct emu_t* emu) {
     emu->V[0xF] = 0;
     emu->I      = 0;
     emu->SP     = 0;
+    emu->DT     = 0;
 }
 
 void chp8_destroy(struct emu_t* emu) {
@@ -84,6 +85,9 @@ bool chp8_singlestep(struct emu_t* emu) {
     uint16_t instr = (uint16_t)(emu->memory[emu->pc] << 8 | emu->memory[emu->pc + 1]);
     emu->pc += 2;
     handle_instruction(emu, instr);
+
+    if (emu->DT > 0)
+        emu->DT--;
 
     return true;
 }
