@@ -27,6 +27,8 @@ void chp8_destroy(struct emu_t* emu);
  */
 bool chp8_load_from_file(struct emu_t* emu, const char* filename);
 
+void chp8_setkey(struct emu_t* emu, uint8_t key, bool status);
+
 /* chp8_singlestep:
  *   Emula una única instrucción si es posible, devuelve false si la ejecución
  *   terminó.

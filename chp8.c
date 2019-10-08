@@ -24,6 +24,11 @@ uint8_t fontset[80] = {
     0xF0, 0x80, 0xF0, 0x80, 0x80  // F
 };
 
+void chp8_clear_keypad(struct emu_t* emu) {
+    for (int i = 0; i < 16; i++)
+        emu->keypad[i] = false;
+}
+
 struct emu_t* chp8_init() {
     emu_t* emu  = calloc(sizeof(emu_t) + MEMSIZE * sizeof(uint8_t), 1);
     emu->pc     = PROGSTART;
@@ -49,10 +54,7 @@ void chp8_reset(struct emu_t* emu) {
     chp8_clear_keypad(emu);
 }
 
-void chp8_clear_keypad(struct emu_t* emu) {
-    for (int i = 0; i < 16; i++)
-        emu->keypad[i] = false;
-}
+
 
 void chp8_destroy(struct emu_t* emu) {
     free(emu);
@@ -85,6 +87,10 @@ bool chp8_load_from_file(struct emu_t* emu, const char* filename) {
     fclose(rom);
 
     return true;
+}
+
+void chp8_setkey(struct emu_t* emu, uint8_t key, bool status) {
+    emu->keypad[key] = status;
 }
 
 bool chp8_singlestep(struct emu_t* emu) {

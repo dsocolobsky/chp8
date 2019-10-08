@@ -97,6 +97,34 @@ int main(int argc, char* argv[])
         nk_input_begin(ctx);
         while (SDL_PollEvent(&evt)) {
             if (evt.type == SDL_QUIT) goto cleanup;
+
+            if (evt.type == SDL_KEYDOWN || evt.type == SDL_KEYUP) {
+                bool down = evt.type == SDL_KEYDOWN;
+                switch (evt.key.keysym.sym) {
+                    case SDLK_1: chp8_setkey(emu, 0x1, down); break;
+                    case SDLK_2: chp8_setkey(emu, 0x2, down); break;
+                    case SDLK_3: chp8_setkey(emu, 0x3, down); break;
+                    case SDLK_4: chp8_setkey(emu, 0xC, down); break;
+
+                    case SDLK_q: chp8_setkey(emu, 0x4, down); break;
+                    case SDLK_w: chp8_setkey(emu, 0x5, down); break;
+                    case SDLK_e: chp8_setkey(emu, 0x6, down); break;
+                    case SDLK_r: chp8_setkey(emu, 0xD, down); break;
+
+                    case SDLK_a: chp8_setkey(emu, 0x7, down); break;
+                    case SDLK_s: chp8_setkey(emu, 0x8, down); break;
+                    case SDLK_d: chp8_setkey(emu, 0x9, down); break;
+                    case SDLK_f: chp8_setkey(emu, 0xE, down); break;
+
+                    case SDLK_z: chp8_setkey(emu, 0xA, down); break;
+                    case SDLK_x: chp8_setkey(emu, 0x0, down); break;
+                    case SDLK_c: chp8_setkey(emu, 0xB, down); break;
+                    case SDLK_v: chp8_setkey(emu, 0xF, down); break;
+
+                    default: break;
+                }
+            }
+
             nk_sdl_handle_event(&evt);
         }
         nk_input_end(ctx);

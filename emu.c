@@ -127,8 +127,8 @@ static void op_display(emu_t *emu, uint8_t x, uint8_t y, uint8_t n) {
 }
 
 static void op_skp(emu_t *emu, uint8_t reg) {
-    printf("STUB op_skp(reg: %02X)\n", reg);
-    assert(false);
+    if (emu->keypad[emu->V[reg]])
+        emu->pc += 2;
 }
 
 static void op_sknp(emu_t *emu, uint8_t reg) {
@@ -141,9 +141,12 @@ static void op_ld_Vx_DT(emu_t *emu, uint8_t reg) {
     emu->V[reg] = emu->DT;
 }
 
+// TODO is this fine?
 static void op_ld_Vx_K(emu_t *emu, uint8_t reg) {
-    printf("STUB op_ld_Vx_K(reg: %02X)\n", reg);
-    assert(false);
+    bool pressed = false;
+    while (!pressed) {
+        
+    }
 }
 
 static void op_ld_DT_Vx(emu_t *emu, uint8_t reg) {

@@ -200,6 +200,8 @@ void chp8_keypad_window(struct nk_context* ctx, struct emu_t* emu) {
     NK_WINDOW_BORDER|NK_WINDOW_MOVABLE|NK_WINDOW_SCALABLE|
         NK_WINDOW_MINIMIZABLE|NK_WINDOW_TITLE)) {
 
+            struct nk_color yellow = {255,255,0,255};
+
             nk_layout_row_dynamic(ctx, 75, 4);
 
             if (nk_button_label(ctx, "1")) {
