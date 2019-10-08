@@ -131,9 +131,8 @@ static void op_skp(emu_t *emu, uint8_t reg) {
     assert(false);
 }
 
-static void op_skpn(emu_t *emu, uint8_t reg) {
-    printf("STUB op_skpn(reg: %02X)\n", reg);
-    assert(false);
+static void op_sknp(emu_t *emu, uint8_t reg) {
+    emu->pc += 2;
 }
 
 // WARNING not sure how the delay timer should behave
@@ -218,7 +217,7 @@ static void handle_instruction(emu_t *emu, uint16_t ins) {
         case 0xD: op_display (emu, reg1, reg2, NIBBLE_0(ins)); break;
         case 0xE:
             if      (val == 0x9E) op_skp (emu, reg1);
-            else if (val == 0xA1) op_skpn(emu, reg1);
+            else if (val == 0xA1) op_sknp(emu, reg1);
             else goto unknown;
             break;
         case 0xF:
