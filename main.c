@@ -28,11 +28,56 @@
 #include "chp8.h"
 #include "chp8_gui.h"
 
+#include "defines.h"
+
 #define WINDOW_WIDTH 1200
 #define WINDOW_HEIGHT 800
 
 #define MAX_VERTEX_MEMORY 512 * 1024
 #define MAX_ELEMENT_MEMORY 128 * 1024
+
+struct nk_canvas {
+    struct nk_command_buffer *painter;
+    struct nk_vec2 item_spacing;
+    struct nk_vec2 panel_padding;
+    struct nk_style_item window_background;
+};
+
+static void
+canvas_begin(struct nk_context *ctx, struct nk_canvas *canvas, nk_flags flags,
+    int x, int y, int width, int height, struct nk_color background_color)
+{
+    /* save style properties which will be overwritten */
+    canvas->panel_padding = ctx->style.window.padding;
+    canvas->item_spacing = ctx->style.window.spacing;
+    canvas->window_background = ctx->style.window.fixed_background;
+
+    /* use the complete window space and set background */
+    ctx->style.window.spacing = nk_vec2(0,0);
+    ctx->style.window.padding = nk_vec2(0,0);
+    ctx->style.window.fixed_background = nk_style_item_color(background_color);
+
+    /* create/update window and set position + size */
+    flags = flags & ~NK_WINDOW_DYNAMIC;
+    nk_window_set_bounds(ctx, "Window", nk_rect(x, y, width, height));
+    nk_begin(ctx, "Window", nk_rect(x, y, width, height), NK_WINDOW_NO_SCROLLBAR|flags);
+
+    /* allocate the complete window space for drawing */
+    {struct nk_rect total_space;
+    total_space = nk_window_get_content_region(ctx);
+    nk_layout_row_dynamic(ctx, total_space.h, 1);
+    nk_widget(&total_space, ctx);
+    canvas->painter = nk_window_get_canvas(ctx);}
+}
+
+static void
+canvas_end(struct nk_context *ctx, struct nk_canvas *canvas)
+{
+    nk_end(ctx);
+    ctx->style.window.spacing = canvas->panel_padding;
+    ctx->style.window.padding = canvas->item_spacing;
+    ctx->style.window.fixed_background = canvas->window_background;
+}
 
 int main(int argc, char* argv[])
 {
@@ -41,6 +86,10 @@ int main(int argc, char* argv[])
     SDL_GLContext glContext;
     int win_width, win_height;
     int running = 1;
+
+    struct nk_canvas canvas;
+    int ticks = 0;
+
 
     /* GUI */
     struct nk_context *ctx;
@@ -129,6 +178,24 @@ int main(int argc, char* argv[])
         }
         nk_input_end(ctx);
 
+        /* Draw */
+
+        // Draw Canvas
+        canvas_begin(ctx, &canvas, NK_WINDOW_NO_INPUT, CANVAS_X, CANVAS_Y, CANVAS_WIDTH, CANVAS_HEIGHT, nk_rgb(32,32,32));
+        if (ticks == 0) {
+            for (int row = 0; row < DISPLAY_ROWS; row++) {
+                for (int col = 0; col < DISPLAY_COLS; col++) {
+                    if (!emu->display[row][col])
+                        continue;
+
+                    nk_fill_rect(canvas.painter, nk_rect(CANVAS_X+col*CANVAS_PX_SIZE,
+                            CANVAS_Y+row*CANVAS_PX_SIZE,CANVAS_PX_SIZE,CANVAS_PX_SIZE), 0, nk_rgb(255, 0, 0));
+                }
+            }
+        }
+
+        canvas_end(ctx, &canvas);
+
         switch (chp8_debug_window(ctx, emu, status)) {
             case PAUSE:     status = PAUSED;        break;
             case STEP:      chp8_singlestep(emu);   break;
@@ -137,22 +204,26 @@ int main(int argc, char* argv[])
             case NONE:                              break;
         }
 
-        chp8_display_window(ctx, emu);
+        //chp8_display_window(ctx, emu);
         chp8_code_window(ctx, emu);
         chp8_memory_window(ctx, emu);
         chp8_keypad_window(ctx, emu);
 
-        /* Draw */
         SDL_GetWindowSize(win, &win_width, &win_height);
         glViewport(0, 0, win_width, win_height);
         glClear(GL_COLOR_BUFFER_BIT);
-        glClearColor(bg.r, bg.g, bg.b, bg.a);
+        glClearColor(bg.r, bg.g, bg.b, bg.a);        
 
         nk_sdl_render(NK_ANTI_ALIASING_ON, MAX_VERTEX_MEMORY, MAX_ELEMENT_MEMORY);
+
         SDL_GL_SwapWindow(win);
 
         if (status == RUNNING)
             chp8_singlestep(emu);
+
+        ticks++;
+        if (ticks > CANVAS_REFRESH)
+            ticks = 0;
     }
 
 cleanup:

@@ -11,6 +11,14 @@
 #define DISPLAY_COLS    64
 #define DISPLAY_ROWS    32
 
+// Actual screen in canvas values
+#define CANVAS_PX_SIZE  8
+#define CANVAS_WIDTH    DISPLAY_COLS*CANVAS_PX_SIZE
+#define CANVAS_HEIGHT   DISPLAY_ROWS*CANVAS_PX_SIZE
+#define CANVAS_X        100
+#define CANVAS_Y        100
+#define CANVAS_REFRESH  0
+
 #define NIBBLE_3(X) (X & 0xF000)>>12
 #define NIBBLE_2(X) (X & 0x0F00)>>8
 #define NIBBLE_1(X) (X & 0x00F0)>>4
