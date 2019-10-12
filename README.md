@@ -1,7 +1,7 @@
 chp8
 =========
 ![screenshot](img/screenshot.png)
-This is a simple chip-8 emulator written in C. This is made purely for
+This is a simple Chip-8 emulator written in C. This is made purely for
 educational purposes and the code is intended to be as clear and readable
 as possible.
 
@@ -19,8 +19,9 @@ Features
 
 Keymap
 =================
-The keyboard is mapped to the CHIP-8 keypad as follows:
+The keyboard is mapped to the Chip-8 keypad as follows:
 ![keymap](img/keymap.png)
+
 (Thanks HackADay for the picture, out of coincidence we ended up using the same mapping)
 
 Roadmap
@@ -33,7 +34,7 @@ Roadmap
 
 How does it work?
 =================
-The code is intented to be self-explanatory, for more information about chip you can read:
+The code is intented to be self-explanatory, for more information about Chip-8 you can read:
 * [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 * [Cowgod's reference](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM).
 
