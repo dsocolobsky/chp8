@@ -33,10 +33,10 @@ Roadmap
 How does it work?
 =================
 The code is intented to be self-explanatory, for more information about chip you can read:
-* [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8) and
+* [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8)
 * [Cowgod's reference](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM).
 
 Acknowledgements
 ===================
-* Ignacio Losiggio (@iglosiggio) for writing a big part of the GUI
+* Ignacio Losiggio ([@iglosiggio](https://github.com/iglosiggio)) for writing a big part of the GUI
 * Cowgod for his Chip-8 Reference
