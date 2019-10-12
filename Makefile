@@ -1,5 +1,5 @@
 CFLAGS = -std=c99 -Wall -pedantic -ggdb
-BIN = gui
+BIN = chp8
 
 ifeq ($(OS),Windows_NT)
 LIBS = -lmingw32 -lSDL2main -lSDL2 -lopengl32 -lm -lGLU32 -lGLEW32
@@ -16,11 +16,8 @@ all: $(BIN)
 	
 clean:
 	rm -f $(BIN)
-	rm -f gui
-	rm -f main
 
-
-gui: main.c chp8.c defines.h chp8_gui.c emu.c
+chp8: main.c chp8.c defines.h chp8_gui.c emu.c
 	$(CC) main.c chp8.c chp8_gui.c $(CFLAGS) -o $@ $(LIBS)
 
 .PHONY: all clean
