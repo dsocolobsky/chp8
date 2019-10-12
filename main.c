@@ -26,8 +26,8 @@
 #define NK_INCLUDE_FONT_BAKING
 #define NK_IMPLEMENTATION
 #define NK_SDL_GL3_IMPLEMENTATION
-#include "nuklear/nuklear.h"
-#include "nuklear/nuklear_sdl_gl3.h"
+#include "lib/nuklear.h"
+#include "lib/nuklear_sdl_gl3.h"
 
 #include "chp8.h"
 #include "chp8_gui.h"
@@ -137,7 +137,7 @@ int main(int argc, char* argv[])
 
     struct nk_font_atlas *atlas;
     nk_sdl_font_stash_begin(&atlas);
-    struct nk_font *proggy = nk_font_atlas_add_from_file(atlas, "ProggyTiny.ttf", 10, 0);
+    struct nk_font *proggy = nk_font_atlas_add_from_file(atlas, "lib/ProggyTiny.ttf", 10, 0);
     nk_sdl_font_stash_end();
     nk_style_set_font(ctx, &proggy->handle);
 

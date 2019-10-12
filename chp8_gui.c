@@ -8,7 +8,7 @@
 #define NK_INCLUDE_VERTEX_BUFFER_OUTPUT
 #define NK_INCLUDE_FONT_BAKING
 #define NK_INCLUDE_DEFAULT_FONT
-#include "nuklear/nuklear.h"
+#include "lib/nuklear.h"
 
 #include "defines.h"
 #include "chp8_gui.h"
