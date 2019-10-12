@@ -173,7 +173,7 @@ int main(int argc, char* argv[])
                     default: break;
                 }
             }
-
+            
             nk_sdl_handle_event(&evt);
         }
         nk_input_end(ctx);

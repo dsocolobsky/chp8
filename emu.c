@@ -2,6 +2,7 @@
 #define _STATIC_EMU_C
 #include <stdio.h>
 #include <assert.h>
+#include "defines.h"
 
 static void op_cls(emu_t *emu) {
     for (int row = 0; row < DISPLAY_ROWS; row++)
@@ -172,9 +173,18 @@ static void op_ld_F(emu_t *emu, uint8_t reg) {
     emu->I = 0x0000 + emu->V[reg]*5;
 }
 
+static uint8_t hex2bcd(uint8_t x) {
+    uint8_t y;
+    y = (x / 10) << 4;
+    y = y | (x % 10);
+    return y;
+}
+
 static void op_ld_BCD(emu_t *emu, uint8_t reg) {
-    printf("STUB op_ld_BCD(reg: %02X)\n", reg);
-    assert(false);
+    uint8_t bcd = hex2bcd(emu->V[reg]);
+    emu->memory[(emu->I)+0] = (bcd >> 2) & 0x1;
+    emu->memory[(emu->I)+1] = (bcd >> 1) & 0x1;
+    emu->memory[(emu->I)+2] = (bcd >> 0) & 0x1;
 }
 
 static void op_ld_array_Vx(emu_t *emu, uint8_t reg) {
