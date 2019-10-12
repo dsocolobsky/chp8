@@ -25,16 +25,16 @@ The keyboard is mapped to the CHIP-8 keypad as follows:
 Roadmap
 =================
 (In no particular order)
-- [] Add Sound
-- [] Add feedback when pressing keys in the on-screen keyboard
-- [] Fix screen's refresh-rate
-- [] Fix input's rate
+- [ ] Add Sound
+- [ ] Add feedback when pressing keys in the on-screen keyboard
+- [ ] Fix screen's refresh-rate
+- [ ] Fix input's rate
 
 How does it work?
 =================
 The code is intented to be self-explanatory, for more information about chip you can read:
-    * [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8) and
-    * [Cowgod's reference](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM).
+* [Wikipedia](https://en.wikipedia.org/wiki/CHIP-8) and
+* [Cowgod's reference](http://devernay.free.fr/hacks/chip8/C8TECH10.HTM).
 
 Acknowledgements
 ===================
