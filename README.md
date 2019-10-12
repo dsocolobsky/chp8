@@ -1,5 +1,6 @@
 chp8
 =========
+![screenshot](img/screenshot.png)
 This is a simple chip-8 emulator written in C. This is made purely for
 educational purposes and the code is intended to be as clear and readable
 as possible.
