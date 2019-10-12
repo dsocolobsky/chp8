@@ -3,11 +3,12 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-/* Size de la memoria (en bytes) */
+/* Memory size (in bytes) */
 #define MEMSIZE     4096
-/* Los programas comienzan a partir de los 512B */
+/* Programs start on 512B onwards */
 #define PROGSTART   512
 
+/* Cols and Rows for the Chip8 display */
 #define DISPLAY_COLS    64
 #define DISPLAY_ROWS    32
 
@@ -30,16 +31,17 @@
 #define BIT_SET(X,N)    (X & (1<<N))
 
 typedef struct emu_t {
-    uint8_t *memory;
+    uint8_t  *memory;
     uint16_t pc;
     uint16_t I;
-    uint8_t V[16];
+    uint8_t  V[16];
     uint16_t DT;
     uint16_t ST;
-    uint8_t SP;
+    uint8_t  SP;
     uint16_t stack[48];
-    uint8_t display[DISPLAY_ROWS][DISPLAY_COLS];
+    uint8_t  display[DISPLAY_ROWS][DISPLAY_COLS];
     uint32_t current_rom_size;
     bool keypad[16];
 } emu_t;
+
 #endif

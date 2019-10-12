@@ -1,39 +1,33 @@
 #ifndef _CHP8_GUI_H
 #define _CHP8_GUI_H
-/* Acción a realizar sobre el emulador:
- *   - CONTINUE: Pasar el estado a RUNNING
- *   - STEP: Realizar single-stepping
- *   - PAUSE: Pasar el estado a PAUSED
- *   - NONE: No hacer nada */
+/** Action to perform in the emulator:
+ *   - CONTINUE: Set state to RUNNING
+ *   - STEP:     Single-step
+ *   - PAUSE:    Set state to PAUSED
+ *   - NONE:     Do nothing
+**/
 enum action { CONTINUE, STEP, PAUSE, RESET, NONE };
 
-/* Estado del eumlador:
- *   - RUNNING: Indica que el emulador esta corriendo actualmente y puede ser
- *              pausado.
- *   - PAUSED: Indica que el emulador está pausado actualmente y puede
- *             despausarse o realizar single-stepping
+/* State of the emulator:
+ *   - RUNNING: Emulator is currently running and can be paused
+ *   - PAUSED: Emulator is currently running and can be un-paused (or single-stepped)
  */
 enum status { RUNNING, PAUSED };
 
-/* chp8_debug_window:
- *   Muestra la ventana de registros y control de flujo del emulador. Devuelve
- *   la acción a ejecutar.
- */
+/* Shows the register window and flow of the emulator. Returns the action to perform */
 enum action chp8_debug_window(struct nk_context *ctx, struct emu_t* emu,
                               enum status status);
 
-/* chp8_display_window:
- *   Muestra el display del emulador (texto).
- */
+/* Shows the emulator's display (as text)  CURRENTLY DISABLED */
 void chp8_display_window(struct nk_context *ctx, struct emu_t* emu);
 
-/* chp8_code_window:
- *   Muestra una versión desensamblada de las próximas instrucciones
- */
+/* Show the ROM's disassembly and the current instruction */
 void chp8_code_window(struct nk_context* ctx, struct emu_t* emu);
 
+/* Shows the emulator's memory as raw bytes */
 void chp8_memory_window(struct nk_context* ctx, struct emu_t* emu);
 
+/* Shows the CHIP8 keypad, which can be interacted with */
 void chp8_keypad_window(struct nk_context* ctx, struct emu_t* emu);
 
 #endif

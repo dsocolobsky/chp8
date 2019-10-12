@@ -54,18 +54,14 @@ void chp8_reset(struct emu_t* emu) {
     chp8_clear_keypad(emu);
 }
 
-
-
 void chp8_destroy(struct emu_t* emu) {
     free(emu);
 }
 
 bool chp8_load_from_file(struct emu_t* emu, const char* filename) {
-    FILE *rom;
-    rom = fopen(filename, "r");
-
+    FILE *rom = fopen(filename, "r");
     if (!rom) {
-        perror("Error al leer archivo");
+        perror("Error opening the file");
         return false;
     }
 
@@ -74,18 +70,16 @@ bool chp8_load_from_file(struct emu_t* emu, const char* filename) {
     emu->current_rom_size = file_size;
     rewind(rom);
 
-    printf("El size del fichero es: %ld\n", file_size);
+    printf("File size is: %ld\n", file_size);
 
     size_t bytes_read = fread(emu->memory + PROGSTART, sizeof(uint8_t), file_size, rom);
 
     if (bytes_read != file_size) {
-        perror("Error leyendo bytes del archivo");
+        perror("Error reading from file");
         return false;
     }
 
-
     fclose(rom);
-
     return true;
 }
 
@@ -101,6 +95,7 @@ bool chp8_singlestep(struct emu_t* emu) {
     emu->pc += 2;
     handle_instruction(emu, instr);
 
+    // Update delay timer
     if (emu->DT > 0)
         emu->DT--;
 

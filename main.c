@@ -1,4 +1,8 @@
-/* Bad on nuklear sdl_opengl3 example */
+/** This file includes code from:
+ * nuklear/example/canvas.c
+ * nuklear/demo/sdl_opengl3/main.c
+**/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -30,10 +34,10 @@
 
 #include "defines.h"
 
-#define WINDOW_WIDTH 1200
+#define WINDOW_WIDTH  1200
 #define WINDOW_HEIGHT 800
 
-#define MAX_VERTEX_MEMORY 512 * 1024
+#define MAX_VERTEX_MEMORY  512 * 1024
 #define MAX_ELEMENT_MEMORY 128 * 1024
 
 struct nk_canvas {
@@ -89,7 +93,6 @@ int main(int argc, char* argv[])
 
     struct nk_canvas canvas;
     int ticks = 0;
-
 
     /* GUI */
     struct nk_context *ctx;
@@ -181,20 +184,22 @@ int main(int argc, char* argv[])
         /* Draw */
 
         // Draw Canvas
-        canvas_begin(ctx, &canvas, NK_WINDOW_NO_INPUT, CANVAS_X, CANVAS_Y, CANVAS_WIDTH, CANVAS_HEIGHT, nk_rgb(32,32,32));
-        if (ticks == 0) {
-            for (int row = 0; row < DISPLAY_ROWS; row++) {
+        canvas_begin(ctx, &canvas, NK_WINDOW_NO_INPUT, CANVAS_X, CANVAS_Y,
+            CANVAS_WIDTH, CANVAS_HEIGHT, nk_rgb(32,32,32));
+        {
+            if (ticks == 0) {
+                for (int row = 0; row < DISPLAY_ROWS; row++)
                 for (int col = 0; col < DISPLAY_COLS; col++) {
                     if (!emu->display[row][col])
                         continue;
 
                     nk_fill_rect(canvas.painter, nk_rect(CANVAS_X+col*CANVAS_PX_SIZE,
-                            CANVAS_Y+row*CANVAS_PX_SIZE,CANVAS_PX_SIZE,CANVAS_PX_SIZE), 0, nk_rgb(255, 0, 0));
+                        CANVAS_Y+row*CANVAS_PX_SIZE,CANVAS_PX_SIZE,CANVAS_PX_SIZE),
+                        0, nk_rgb(255, 0, 0));
                 }
             }
+            canvas_end(ctx, &canvas);
         }
-
-        canvas_end(ctx, &canvas);
 
         switch (chp8_debug_window(ctx, emu, status)) {
             case PAUSE:     status = PAUSED;        break;
